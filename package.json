@@ -1,0 +1,57 @@
+{
+  "name": "degree-tracker-ai",
+  "version": "1.0.0",
+  "description": "AI-powered degree tracking application for college students to track multiple programs (majors, minors, concentrations) simultaneously",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx http-server -p 3000 -c-1",
+    "start": "npx http-server -p 8080 -c-1",
+    "build": "echo 'No build step required for static site'",
+    "preview": "npx http-server dist -p 4173",
+    "lint": "echo 'Linting JavaScript files...' && find . -name '*.js' -not -path './node_modules/*' | head -10",
+    "test": "echo 'No tests specified yet'",
+    "deploy": "vercel --prod",
+    "deploy-dev": "vercel"
+  },
+  "keywords": [
+    "degree-tracker",
+    "academic-planning",
+    "ai-assistant",
+    "northeastern-university",
+    "education-technology",
+    "student-portal",
+    "graduation-planning",
+    "course-management"
+  ],
+  "author": {
+    "name": "Maya Borkar",
+    "email": "borkar.m@northeastern.edu"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/degree-tracker-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/degree-tracker-ai/issues"
+  },
+  "homepage": "https://degree-tracker-ai.vercel.app",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11"
+  ],
+  "vercel": {
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
