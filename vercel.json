@@ -1,10 +1,6 @@
 {
-  "version": 2,
-  "name": "degree-tracker",
-  "public": true,
-  "github": {
-    "silent": true
-  },
+  "buildCommand": "echo 'No build step required'",
+  "outputDirectory": ".",
   "rewrites": [
     {
       "source": "/(.*)",
