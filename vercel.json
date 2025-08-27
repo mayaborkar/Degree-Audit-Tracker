@@ -17,11 +17,6 @@
       "dest": "/index.html"
     }
   ],
-  "functions": {
-    "app.js": {
-      "includeFiles": "**"
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
