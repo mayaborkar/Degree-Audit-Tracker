@@ -7,14 +7,7 @@ class DegreeTracker {
         this.currentView = 'overview';
         this.theme = localStorage.getItem('theme') || 'light';
         
-        // Initialize enhanced AI assistant if available
-        if (typeof EnhancedAIAssistant !== 'undefined') {
-            this.enhancedAI = new EnhancedAIAssistant(this);
-        }
-        
-        // Initialize program tracker for multiple programs
-        this.activePrograms = new Map();
-        this.programHistory = [];
+        // Simple AI assistant functionality built into main app
         
         // Update requirements based on actual completed/planned courses
         this.updateRequirementFulfillment();
@@ -649,20 +642,11 @@ class DegreeTracker {
     // Modal Management
     openModal(modalId) {
         const modal = document.getElementById(modalId);
+        const overlay = document.getElementById('modal-overlay');
         
-        if (modal) {
-            // Handle different modal structures
-            if (modalId === 'edit-course-modal') {
-                // Edit modal has its own overlay structure
-                modal.classList.add('active');
-            } else {
-                // Other modals use the main overlay
-                const overlay = document.getElementById('modal-overlay');
-                if (overlay) {
-                    overlay.classList.add('active');
-                    modal.classList.add('active');
-                }
-            }
+        if (modal && overlay) {
+            overlay.classList.add('active');
+            modal.classList.add('active');
         }
     }
 
@@ -674,12 +658,6 @@ class DegreeTracker {
             overlay.classList.remove('active');
         }
         modals.forEach(modal => modal.classList.remove('active'));
-        
-        // Also handle edit modal specifically
-        const editModal = document.getElementById('edit-course-modal');
-        if (editModal) {
-            editModal.classList.remove('active');
-        }
     }
 
     // Quick Actions
@@ -1032,25 +1010,16 @@ class DegreeTracker {
     }
 
     async generateAIResponse(message) {
-        // Use the enhanced AI assistant if available
-        if (typeof EnhancedAIAssistant !== 'undefined' && this.enhancedAI) {
-            try {
-                return await this.enhancedAI.processMessage(message);
-            } catch (error) {
-                console.error('Enhanced AI error, falling back to basic responses:', error);
-            }
-        }
-        
-        // Enhanced flexible response system
+        // Built-in AI response system
         return this.generateFlexibleResponse(message);
     }
 
     generateFlexibleResponse(message) {
         const lowerMessage = message.toLowerCase();
         
-        // URL parsing requests
-        if (lowerMessage.includes('add') && (lowerMessage.includes('minor') || lowerMessage.includes('major') || lowerMessage.includes('concentration')) && lowerMessage.includes('http')) {
-            return this.handleURLRequirementParsing(message);
+        // Simplified URL handling
+        if (lowerMessage.includes('http') && (lowerMessage.includes('minor') || lowerMessage.includes('major'))) {
+            return `I see you've provided a URL! For now, please manually add individual courses using the "Add Course" button. URL parsing will be added in a future version.`;
         }
         
         // Course addition requests
@@ -1365,94 +1334,6 @@ I can also have natural conversations about her academic journey. What would you
         return `To add a course, click the **Add Course** button (+ icon) in the header or the "Add Course" quick action. I can help you track any course you've completed or are planning to take!`;
     }
 
-    handleURLRequirementParsing(message) {
-        const urlMatch = message.match(/https?:\/\/[^\s]+/i);
-        
-        if (!urlMatch) {
-            return `I didn't find a valid URL in your message. Please provide a university catalog URL like:
-            
-**Examples:**
-- https://catalog.northeastern.edu/undergraduate/science/mathematics/mathematics-minor/
-- https://catalog.northeastern.edu/undergraduate/computer-information-science/computer-science/bscs/
-
-I'll parse the requirements automatically and add them to your tracker!`;
-        }
-
-        const url = urlMatch[0];
-        const programType = message.toLowerCase().includes('minor') ? 'minor' : 
-                           message.toLowerCase().includes('concentration') ? 'concentration' : 'major';
-
-        // For demo purposes, simulate requirement parsing
-        setTimeout(() => {
-            const mockProgram = this.generateMockRequirements(url, programType);
-            this.addChatMessage('ai', `🎓 **Requirements Parsed Successfully!**
-
-**Program:** ${mockProgram.name}
-**Type:** ${mockProgram.type}
-**University:** ${mockProgram.university}
-**Requirements Found:** ${mockProgram.requirementCount}
-
-**Sample Requirements:**
-${mockProgram.sampleRequirements.map(req => `- ${req}`).join('\n')}
-
-I've added this program to your tracker! Check the Requirements tab to see how your current courses align with these new requirements.
-
-**Note:** This is a demo version. The full implementation would:
-- Parse actual HTML content from the URL
-- Extract specific course requirements 
-- Match courses to your transcript automatically
-- Handle different university formats`);
-        }, 2000);
-
-        return `🔄 **Parsing Requirements from URL...**
-
-Fetching content from: ${url}
-
-This may take a moment as I analyze the requirements structure and extract course information...`;
-    }
-
-    generateMockRequirements(url, type) {
-        const mockPrograms = {
-            'minor': {
-                name: 'Mathematics Minor',
-                type: 'minor',
-                university: 'Northeastern University', 
-                requirementCount: 6,
-                sampleRequirements: [
-                    'MATH 1341 - Calculus 1 (4 credits)',
-                    'MATH 1342 - Calculus 2 (4 credits)',
-                    'MATH 2331 - Linear Algebra (4 credits)',
-                    'MATH 3081 - Probability and Statistics (4 credits)'
-                ]
-            },
-            'major': {
-                name: 'Computer Science BS',
-                type: 'major',
-                university: 'Northeastern University',
-                requirementCount: 15,
-                sampleRequirements: [
-                    'CS 1800 - Discrete Structures (4 credits)',
-                    'CS 2500 - Fundamentals of CS 1 (4 credits)', 
-                    'CS 3000 - Algorithms and Data (4 credits)',
-                    'CS 3500 - Object-Oriented Design (4 credits)'
-                ]
-            },
-            'concentration': {
-                name: 'Artificial Intelligence Concentration',
-                type: 'concentration',
-                university: 'Northeastern University',
-                requirementCount: 4,
-                sampleRequirements: [
-                    'CS 4100 - Artificial Intelligence (4 credits)',
-                    'DS 4400 - Machine Learning 1 (4 credits)',
-                    'CS 4120 - Natural Language Processing (4 credits)',
-                    'DS 4420 - Machine Learning 2 (4 credits)'
-                ]
-            }
-        };
-
-        return mockPrograms[type] || mockPrograms['major'];
-    }
 
     generateProgressResponse() {
         const majorProgress = this.calculateMajorProgress();

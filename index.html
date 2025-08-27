@@ -565,46 +565,54 @@
         </div>
     </div>
 
-    <!-- Edit Course Modal -->
-    <div id="edit-course-modal" class="modal">
-        <div class="modal-overlay" data-modal="edit-course-modal"></div>
-        <div class="modal-container">
+        <!-- Edit Course Modal -->
+        <div class="modal" id="edit-course-modal">
             <div class="modal-header">
-                <h2>Edit Course</h2>
-                <button class="modal-close" data-modal="edit-course-modal">×</button>
+                <h3>Edit Course</h3>
+                <button class="modal-close" data-modal="edit-course-modal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            
-            <form id="edit-course-form">
-                <input type="hidden" id="edit-course-index" name="courseIndex">
-                <input type="hidden" id="edit-course-type" name="courseType">
-                
-                <div class="input-group">
-                    <label for="edit-course-code">Course Code</label>
-                    <input type="text" id="edit-course-code" name="courseCode" required placeholder="e.g., CS 2500">
-                </div>
-                
-                <div class="input-group">
-                    <label for="edit-course-title">Course Title</label>
-                    <input type="text" id="edit-course-title" name="courseTitle" required placeholder="e.g., Fundamentals of CS">
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="edit-course-credits">Credits</label>
-                        <input type="number" id="edit-course-credits" name="courseCredits" required min="1" max="8" placeholder="4">
+            <div class="modal-body">
+                <form id="edit-course-form">
+                    <input type="hidden" id="edit-course-index" name="courseIndex">
+                    <input type="hidden" id="edit-course-type" name="courseType">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-course-code">Course Code</label>
+                            <input type="text" id="edit-course-code" name="courseCode" required placeholder="e.g., CS 2500">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-course-credits">Credits</label>
+                            <input type="number" id="edit-course-credits" name="courseCredits" required min="1" max="8" placeholder="4">
+                        </div>
                     </div>
                     
-                    <div class="input-group">
-                        <label for="edit-course-semester">Semester</label>
-                        <input type="text" id="edit-course-semester" name="courseSemester" placeholder="e.g., Fall 2024">
+                    <div class="form-group">
+                        <label for="edit-course-title">Course Title</label>
+                        <input type="text" id="edit-course-title" name="courseTitle" required placeholder="e.g., Fundamentals of CS">
                     </div>
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="edit-course-grade">Grade</label>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-course-status">Status</label>
+                            <select id="edit-course-status" name="courseStatus" required>
+                                <option value="completed">Completed</option>
+                                <option value="planned">Planned</option>
+                                <option value="in-progress">In Progress</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-course-semester">Semester</label>
+                            <input type="text" id="edit-course-semester" name="courseSemester" placeholder="e.g., Fall 2024">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-course-grade">Grade (Optional)</label>
                         <select id="edit-course-grade" name="courseGrade">
-                            <option value="">No Grade</option>
+                            <option value="">Select Grade</option>
                             <option value="A">A</option>
                             <option value="A-">A-</option>
                             <option value="B+">B+</option>
@@ -621,29 +629,21 @@
                         </select>
                     </div>
                     
-                    <div class="input-group">
-                        <label for="edit-course-status">Status</label>
-                        <select id="edit-course-status" name="courseStatus" required>
-                            <option value="completed">Completed</option>
-                            <option value="planned">Planned</option>
-                            <option value="in-progress">In Progress</option>
-                        </select>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-danger" id="delete-course-btn">Delete Course</button>
+                        <button type="button" class="btn-secondary modal-close" data-modal="edit-course-modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            Save Changes
+                        </button>
                     </div>
-                </div>
-                
-                <div class="modal-actions">
-                    <button type="button" class="btn-danger" id="delete-course-btn">Delete Course</button>
-                    <button type="button" class="btn-secondary modal-close" data-modal="edit-course-modal">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Changes</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
 
     <!-- Scripts -->
     <script src="data.js"></script>
-    <script src="requirements-parser.js"></script>
-    <script src="ai-assistant.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

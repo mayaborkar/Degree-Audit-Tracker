@@ -375,7 +375,7 @@ const STUDENT_DATA = {
         // Summer 2 2027 - Co-op
         // Fall 2027 - Co-op
         
-        // Spring 2028 (8 credits - Final Semester)
+        // Spring 2028 (4 credits - Final Semester)
         { 
             code: 'CS 3200', 
             title: 'Introduction to Databases', 
@@ -383,15 +383,6 @@ const STUDENT_DATA = {
             semester: 'Spring 2028',
             status: 'planned',
             category: 'Computer Science'
-        },
-        { 
-            code: 'MATH 3081', 
-            title: 'Probability and Statistics', 
-            credits: 4, 
-            semester: 'Spring 2028',
-            status: 'planned',
-            category: 'Mathematics',
-            note: 'Duplicate - may need to replace'
         }
     ]
 };
