@@ -7,6 +7,9 @@ class DegreeTracker {
         this.currentView = 'overview';
         this.theme = localStorage.getItem('theme') || 'light';
         
+        // Initialize upload parser
+        this.uploadParser = new UploadParser(this);
+        
         // Simple AI assistant functionality built into main app
         
         // Update requirements based on actual completed/planned courses
@@ -66,6 +69,18 @@ class DegreeTracker {
             uploadBtn.addEventListener('click', () => this.openModal('upload-modal'));
         }
 
+        // Upload courses button
+        const uploadCoursesBtn = document.getElementById('upload-courses-btn');
+        if (uploadCoursesBtn) {
+            uploadCoursesBtn.addEventListener('click', () => this.openModal('upload-courses-modal'));
+        }
+
+        // Parse requirements button
+        const parseRequirementsBtn = document.getElementById('parse-requirements-btn');
+        if (parseRequirementsBtn) {
+            parseRequirementsBtn.addEventListener('click', () => this.openModal('requirements-modal'));
+        }
+
         // Quick action buttons
         document.querySelectorAll('.action-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -85,6 +100,10 @@ class DegreeTracker {
         
         // File upload
         this.setupFileUpload();
+        
+        // Setup new upload features
+        this.setupCourseUpload();
+        this.setupRequirementsParser();
     }
 
     setupModalControls() {
@@ -1702,6 +1721,175 @@ You're pursuing an ambitious **dual minor** path! 🎯`;
           '🔴 **Below Standards** - Consider academic support'}
         
         ${currentGPA < 3.0 ? '\n💪 **Improvement Tips:**\n- Focus on core courses in your major\n- Consider retaking lower-grade courses\n- Utilize tutoring and office hours\n- Plan lighter course loads to focus on quality' : ''}`;
+    }
+
+    // Course Upload Setup
+    setupCourseUpload() {
+        const uploadArea = document.getElementById('courses-upload-area');
+        const fileInput = document.getElementById('courses-file-input');
+
+        if (uploadArea && fileInput) {
+            // Click to select file
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.handleCourseUpload(files[0]);
+                }
+            });
+
+            // File selection
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    this.handleCourseUpload(e.target.files[0]);
+                }
+            });
+        }
+    }
+
+    // Requirements Parser Setup
+    setupRequirementsParser() {
+        const form = document.getElementById('requirements-form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleRequirementsParser();
+            });
+        }
+    }
+
+    // Handle Course Upload
+    async handleCourseUpload(file) {
+        const progressDiv = document.getElementById('courses-upload-progress');
+        const statusElement = document.getElementById('courses-upload-status');
+        
+        // Show progress
+        progressDiv.style.display = 'block';
+        statusElement.textContent = 'Processing your file...';
+
+        try {
+            const result = await this.uploadParser.parseCourseFile(file);
+            
+            if (result.success) {
+                const addedCount = this.uploadParser.addCoursesToTracker(result.courses, 'planned');
+                
+                statusElement.textContent = `✅ Added ${addedCount} new courses!`;
+                
+                // Add to chat
+                this.addChatMessage('ai', `🎉 **Course Upload Success!**
+                
+**File:** ${file.name}
+**Courses Found:** ${result.courses.length}
+**New Courses Added:** ${addedCount}
+**Duplicates Skipped:** ${result.courses.length - addedCount}
+
+**Added Courses:**
+${result.courses.slice(0, 5).map(course => `- **${course.code}**: ${course.title} (${course.credits} credits)`).join('\n')}
+${result.courses.length > 5 ? `- ...and ${result.courses.length - 5} more courses` : ''}
+
+All courses have been added as "planned" - you can edit them individually if needed!`);
+
+                // Close modal after delay
+                setTimeout(() => {
+                    this.closeAllModals();
+                    progressDiv.style.display = 'none';
+                }, 2000);
+
+            } else {
+                statusElement.textContent = `❌ ${result.message}`;
+                this.addChatMessage('ai', `❌ **Upload Failed:** ${result.message}`);
+            }
+
+        } catch (error) {
+            statusElement.textContent = `❌ Error processing file`;
+            this.addChatMessage('ai', `❌ **Upload Error:** ${error.message}`);
+            console.error('Course upload error:', error);
+        }
+    }
+
+    // Handle Requirements Parser
+    async handleRequirementsParser() {
+        const programType = document.getElementById('program-type').value;
+        const programName = document.getElementById('program-name').value;
+        const url = document.getElementById('requirements-url').value;
+        
+        const progressDiv = document.getElementById('requirements-progress');
+        const statusElement = document.getElementById('requirements-status');
+        const form = document.getElementById('requirements-form');
+        
+        // Show progress, hide form
+        form.style.display = 'none';
+        progressDiv.style.display = 'block';
+        statusElement.textContent = 'Fetching and parsing requirements...';
+
+        try {
+            const result = await this.uploadParser.parseRequirementsFromURL(url, programType);
+            
+            if (result.success) {
+                const addedCount = this.uploadParser.addRequirementsToTracker(
+                    result.requirements, 
+                    programName, 
+                    programType
+                );
+                
+                statusElement.textContent = `✅ Added ${addedCount} requirements!`;
+                
+                // Add to chat
+                this.addChatMessage('ai', `🎓 **Requirements Added Successfully!**
+                
+**Program:** ${programName} (${programType})
+**URL:** ${url}
+**Requirements Added:** ${addedCount}
+
+**Sample Requirements:**
+${result.requirements.slice(0, 3).map(req => `- **${req.code}**: ${req.title} (${req.credits} credits)`).join('\n')}
+${result.requirements.length > 3 ? `- ...and ${result.requirements.length - 3} more` : ''}
+
+Check the **Requirements** tab to see how your current courses align with these new requirements!`);
+
+                // Close modal after delay
+                setTimeout(() => {
+                    this.closeAllModals();
+                    form.style.display = 'block';
+                    progressDiv.style.display = 'none';
+                }, 3000);
+
+            } else {
+                statusElement.textContent = `❌ ${result.message}`;
+                this.addChatMessage('ai', `❌ **Requirements Parsing Failed:** ${result.message}`);
+                
+                // Show form again
+                setTimeout(() => {
+                    form.style.display = 'block';
+                    progressDiv.style.display = 'none';
+                }, 3000);
+            }
+
+        } catch (error) {
+            statusElement.textContent = `❌ Error parsing requirements`;
+            this.addChatMessage('ai', `❌ **Requirements Error:** ${error.message}`);
+            
+            // Show form again
+            setTimeout(() => {
+                form.style.display = 'block';
+                progressDiv.style.display = 'none';
+            }, 3000);
+            
+            console.error('Requirements parsing error:', error);
+        }
     }
 }
 

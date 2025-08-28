@@ -229,6 +229,14 @@
                             <i class="fas fa-upload"></i>
                             Upload Transcript
                         </button>
+                        <button class="btn-secondary" id="upload-courses-btn">
+                            <i class="fas fa-file-upload"></i>
+                            Upload Course Plan
+                        </button>
+                        <button class="btn-secondary" id="parse-requirements-btn">
+                            <i class="fas fa-link"></i>
+                            Add from URL
+                        </button>
                     </div>
                 </div>
                 
@@ -566,6 +574,108 @@
                 </div>
             </div>
         </div>
+
+        <!-- Upload Course Plan Modal -->
+        <div class="modal" id="upload-courses-modal">
+            <div class="modal-header">
+                <h3>Upload Course Plan</h3>
+                <button class="modal-close" data-modal="upload-courses-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="courses-upload-area">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-upload"></i>
+                    </div>
+                    <h4>Drop your course plan here</h4>
+                    <p>or click to browse files</p>
+                    <small>Upload your planned courses (PDF, TXT)</small>
+                    <input type="file" id="courses-file-input" accept=".pdf,.txt,.csv" hidden>
+                </div>
+                <div class="upload-progress" id="courses-upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="courses-upload-progress-fill"></div>
+                    </div>
+                    <p id="courses-upload-status">Processing...</p>
+                </div>
+                <div class="upload-help">
+                    <h4>📋 Supported Formats:</h4>
+                    <ul>
+                        <li><strong>PDF:</strong> Course catalog, degree audit, academic plan</li>
+                        <li><strong>Text:</strong> Copy-paste from university website</li>
+                        <li><strong>CSV:</strong> Spreadsheet export from academic system</li>
+                    </ul>
+                    <p><strong>Example formats we can parse:</strong></p>
+                    <code>CS 3200 Introduction to Databases (4 credits) - Spring 2025</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Requirements from URL Modal -->
+        <div class="modal" id="requirements-modal">
+            <div class="modal-header">
+                <h3>Add Requirements from Website</h3>
+                <button class="modal-close" data-modal="requirements-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="requirements-form">
+                    <div class="form-group">
+                        <label for="program-type">Program Type</label>
+                        <select id="program-type" required>
+                            <option value="major">Major</option>
+                            <option value="minor">Minor</option>
+                            <option value="concentration">Concentration</option>
+                            <option value="certificate">Certificate</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="program-name">Program Name</label>
+                        <input type="text" id="program-name" placeholder="e.g., Mathematics Minor" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="requirements-url">University Catalog URL</label>
+                        <input type="url" id="requirements-url" placeholder="https://catalog.northeastern.edu/..." required>
+                    </div>
+                    
+                    <div class="requirements-help">
+                        <h4>🌐 Supported Universities:</h4>
+                        <ul>
+                            <li><strong>Northeastern University</strong> - catalog.northeastern.edu</li>
+                            <li><strong>MIT</strong> - catalog.mit.edu</li>
+                            <li><strong>Harvard</strong> - harvard.edu</li>
+                            <li><strong>Generic</strong> - Other university catalogs</li>
+                        </ul>
+                        <p><strong>Example URLs:</strong></p>
+                        <ul>
+                            <li><code>https://catalog.northeastern.edu/undergraduate/science/mathematics/mathematics-minor/</code></li>
+                            <li><code>https://catalog.northeastern.edu/undergraduate/computer-information-science/computer-science/bscs/</code></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary modal-close" data-modal="requirements-modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-download"></i>
+                            Parse Requirements
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="requirements-progress" class="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="requirements-progress-fill"></div>
+                    </div>
+                    <p id="requirements-status">Parsing requirements...</p>
+                </div>
+            </div>
+        </div>
     </div>
 
         <!-- Edit Course Modal -->
@@ -647,6 +757,7 @@
 
     <!-- Scripts -->
     <script src="auth.js"></script>
+    <script src="upload-parser.js"></script>
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
