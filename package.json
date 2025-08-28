@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx http-server -p 3000 -c-1",
     "start": "npx http-server -p 8080 -c-1",
-    "build": "echo 'Static site - no build required'",
+    "build": "node build-env.js",
     "preview": "npx http-server dist -p 4173",
     "lint": "echo 'Linting JavaScript files...' && find . -name '*.js' -not -path './node_modules/*' | head -10",
     "test": "echo 'No tests specified yet'",

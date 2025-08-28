@@ -61,9 +61,9 @@ class SimpleAuth {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         
-        // Simple hardcoded credentials (you'll change these)
-        const validUsername = 'maya_tracker';
-        const validPassword = 'northeastern2028!';
+        // Get credentials from environment variables (set in Vercel dashboard)
+        const validUsername = window.ENV?.AUTH_USERNAME || 'demo_user';
+        const validPassword = window.ENV?.AUTH_PASSWORD || 'demo_pass';
         
         if (username === validUsername && password === validPassword) {
             sessionStorage.setItem('authenticated', 'true');
